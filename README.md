@@ -197,5 +197,173 @@ GET https://fake-api-2y5e.onrender.com/users
 >     
 
 ----------
+# Aula 02
+1.  Vá para:
+
+`src/servicos` 
+
+2.  Crie a pasta `requisicoes` e dentro o arquivo `usuario.js`:
+
+`src/servicos/requisicoes/usuario.js'` 
+
+3.  Dentro do arquivo usuario.js faça o seguinte :
+    
+```javascript
+import api from  "../api";
+
+export  async  function  buscaUsusario(){
+	try{
+		const  resultado  =  await api.get('/userslogin=professorrichardson');
+	return  resultado.data[0]
+}
+	catch (error){
+		console.log(error)
+}
+}
+```
+4.  Agora vamos alterar o pricipal/index.js:
+   adicione esse import: 
+```jsx
+import { buscaUsusario } from  '../../servicos/requisicoes/usuarios';
+```
+----------
+5.  E troque a função busca:
+
+```jsx
+async  function  busca(){
+		const  resultado  =  await  buscaUsusario()
+		console.log(resultado)
+	if(resultado){
+		setUsuario(resultado)
+	}else{
+		Alert.alert("Usuario não encontrado!")
+	}
+}
+```
+6. Faça as próximas alterações conforme e pedido no React:
+```jsx
+<Text  style={estilos.textoNome}>{usuario.name}</Text>
+<Text  style={estilos.textoEmail}>Email do usuario</Text>
+```
+
+7. Após terminar de editar os campos para receber os dados da API temos que configurar o campo input para receber parametros como, por exemplo, o nome para fazer o filtro de busca.
+
+```jsx
+<TextInput
+placeholder="Busque por um usuário"
+autoCapitalize="none"
+style={estilos.entrada}
+value={nomeUsuario}
+onChangeText={setNomeUsuario}
+/>
+```
+
+8. Vamos alterar a forma de busca para receber os dados via filtro ou o nome que nos digitarmos.
+
+```jsx
+async  function  busca(){
+	const  resultado  =  await  buscaUsusario(nomeUsuario)
+	console.log(resultado)
+if(resultado){
+	setUsuario(resultado)
+}else{
+	Alert.alert("Usuario não encontrado!")
+	}
+}
+```
+9. No arquivo Usuario temos que receber esse nome que foi informado no input
+
+```jsx
+import api from  "../api";
+
+export  async  function  buscaUsusario(nome){
+	try{
+		const  resultado  =  await  api.get(`/users?login=${nome}`);
+		return  resultado.data[0]
+	}catch (error){
+		console.log(error)
+	}
+}
+```  
+10. para evitar que ao pesquisar e não encontrar nada ele fique na  tela anterior vamos validar isso também.
+para fazer isso vamos colocar uma estrutura de if 
+
+```javascrpit
+{  usuario.login &&
+}
+
+antes do inicio do fragmente `<> </>` e depois no final
+```
+
+# Aula 03
+
+Agora vamos ver os repositórios, fazer os links e explorar mais um pouco a API.
+
+para isso vamos criar um arquivo que servira de auxilixar em nossas requisiçoes assim como o da busca
+
+1. crie uma pasta chamada `requisicoes` dentro de servicos e um arquivo chamado `repositorio.js` dentro dela
+
+no arquivo iremos escrever o seguinte codigo 
+```jsx
+import api from  "../api";
+export  async  function  pegaRepositrioDoUsuario(id) {
+	try{
+	const  resultado  =  await  api.get(`/repos?postId=${id}`);
+	return  resultado.data
+}
+	catch (error){
+	console.log(error)
+	return []
+	}
+}
+```
+2. agora temos que linkar o arquivo em `/src/paginas/repositorios` 
+
+```jsx
+import { pegaRepositrioDoUsuario } from  '../../servicos/requisicoes/repositorios';
+```
+3. vamos criar a função especial que atualiza os dados assim que é renderizado a tela 
+
+```jsx
+useEffect(async()=>{
+	const  resultado  =  await  pegaRepositrioDoUsuario(route.params.id)
+setRepo(resultado)
+},[])
+```
+
+4. Precisamos criar uma flat list para exibir os repositorio que o usuario tem 
+
+```jsx
+//</TouchableOpacity>
+<FlatList
+data={repo}
+style={{width:'100%'}}
+keyExtractor={repo  =>  repo.id}
+renderItem={({item})=>(
+
+<TouchableOpacity style={estilos.repositorio} >
+<Text  style={estilos.repositorioNome}>{item.name}</Text>
+<Text  style={estilos.repositorioData}>Atualizado em {item.data}</Text>
+</TouchableOpacity>
+)}
+/>
+//</View>
+```
+5. por fim temos que passar o id por parametro lá no botão ou link  que mostra os repositorios
+
+```jsx
+<TouchableOpacity  onPress={() => navigation.navigate('Repositorios',{id: usuario.id})}>
+<Text  style={estilos.repositorios}>
+Ver os repositórios
+</Text>
+</TouchableOpacity>
+```
+
+
+
+
+
+
+
 
 💻 Bom código a todos e até a próxima aula!
