@@ -1,0 +1,6 @@
+1- src/paginas/repositorios/index 
+2- src/paginas/InfoRepositorios/index 
+3- src/paginas/repositorios/index 
+
+aula final
+
